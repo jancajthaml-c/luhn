@@ -19,18 +19,29 @@ double diff(double start, double end) {
 }
 
 int main() {
-	printf("\nRunning \"unit\" tests \n");
+	printf("\nRunning unit tests \n");
 
-	printf("`` => %d\n", digit(""));
-	printf("`001230147647009683210024` => %d\n", digit("001230147647009683210024"));
-	printf("`1234567812345678` => %d\n", digit("1234567812345678"));
+	// expectations
+
+	if (digit("") != 0) {
+		return 1;
+	}
+	if (digit("001230147647009683210024") != 0) {
+		return 1;
+	}
+
+	if (digit("1234567812345678") == 0) {
+		return 1;
+	}
+
+	printf("passed");
 
 	// micro benchmark
 
 	int i;
 	unsigned int times = 20000000;//-1u;
 
-	printf("\nRunning benchmark %lu times \n", (unsigned long) times);
+	printf("\n\nRunning benchmark %lu times \n", (unsigned long) times);
 
 	double total_time = 0;
 	double clock_cost = 0;
@@ -49,7 +60,7 @@ int main() {
 		total_time += diff(t1.tv_nsec, t2.tv_nsec);
 	}
 
-	printf("\nmedian: %f ns/op\n\n", ((total_time-clock_cost)/times));
+	printf("median: %f ns/op\n\n", ((total_time-clock_cost)/times));
 
 	return 0;
 }
