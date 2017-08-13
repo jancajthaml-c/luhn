@@ -1,0 +1,1 @@
+int digit(const char* data);
