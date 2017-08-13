@@ -46,7 +46,6 @@ int main() {
 
 	printf("\nRunning benchmark %lu times \n", (unsigned long) times);
 
-	double best_time = 10000000000.0;
 	double total_time = 0;
 	double clock_cost = 0;
 
@@ -56,27 +55,18 @@ int main() {
 	for (j = 0; j < times; ++j) {
 		clock_gettime(CLOCK_MONOTONIC_RAW, &t1);
 		clock_gettime(CLOCK_MONOTONIC_RAW, &t2);
-		if (1 > 2) {
-			;
-		}
 		clock_cost += diff(t1.tv_nsec, t2.tv_nsec);
 	}
-
-	clock_cost /= times;
 
 	for (i = 0; i < times; ++i) {
 		clock_gettime(CLOCK_MONOTONIC_RAW, &t1);
 		digit("49927398716499273987164992739871649927398716499273987164992739871649927398716499273987164992739871649927398716499273987164992739871649927398716499273987164992739871649927398716");
 		clock_gettime(CLOCK_MONOTONIC_RAW, &t2);
 		double time = diff(t1.tv_nsec, t2.tv_nsec);
-		if (time < best_time) {
-			best_time = time;
-		}
 		total_time += time;
 	}
 
-	printf("\nmedian: %f ns/op\nbest:   %f ns/op\n\n", (total_time/times/clock_cost), (best_time/clock_cost));
+	printf("\nmedian: %f ns/op\n\n", ((total_time-clock_cost)/times));
 
 	return 0;
 }
-
