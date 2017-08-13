@@ -1,60 +1,82 @@
+/////////////////////////////////
+
+const int m[] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0, 2, 4, 6, 8, 1, 3, 5, 7, 9 };
+
+int digit(const char* data) {
+  int d = 0;
+  unsigned long length = sizeof(*data);
+  const char* current = (const char*) data;  
+loop:
+  d += ((length & 1) ? m[*current++] : (*current++ - 48));
+  goto *(length-- ? &&result : &&loop);
+result:
+  return (d - (d/10)*10);
+}
+
+/////////////////////////////////
+
+// FIXME separate to main.c
+
 #include <stdio.h>
 #include <sys/time.h>
 #include <sys/resource.h>
 
-double get_current_time() {
-	struct timeval t;
-	gettimeofday(&t, 0);
-	return t.tv_sec + t.tv_usec*1e-6;
-}
-
-const unsigned int m[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4, 6, 8, 1, 3, 5, 7, 9};
-
-int digit(const char* data) {
-  unsigned int digit = 0;
-  unsigned long length = sizeof(*data);
-  const char* current = (const char*) data;
-
-loop:
-	digit += ((length & 1) ? m[*current++] : *current++ - 48 );
-	goto *(length-- ? &&result : &&loop);
-
-result:
-	return (int)(digit - (digit/10)*10);
+double diff(double start, double end) {
+  double temp;
+  if ((end - start) < 0) {
+  	return 1000000000 + end - start;
+  } else {
+		return end - start;
+  }
+  return temp;
 }
 
 int main() {
+	printf("\nRunning \"unit\" tests \n");
+
 	printf("`` => %d\n", digit(""));
 	printf("`001230147647009683210024` => %d\n", digit("001230147647009683210024"));
 	printf("`1234567812345678` => %d\n", digit("1234567812345678"));
 
 	// micro benchmark
 
-	double mean_time = 0.0;
-	double total_time = 0.0;
 	int i;
-	unsigned int times = 2000000;//-1u;
+	int j;
+	unsigned int times = 20000000;//-1u;
 
-	printf("----------------------------\nRunning %lu times!\n", (unsigned long) times);
+	printf("\nRunning benchmark %lu times \n", (unsigned long) times);
 
-	for (i = 0; i < times; ++i) {
-		double start_time = 0.0;
-		double end_time = 0.0;
-		double bench_time = 0.0;
+	double best_time = 10000000000.0;
+	double total_time = 0;
+	double clock_cost = 0;
 
-		start_time = get_current_time();
-		digit("001230147647009683210024");
+	struct timespec t1;
+	struct timespec t2;
 
-		end_time = get_current_time();
-		bench_time = end_time - start_time;
-		
-		total_time += bench_time;
-		mean_time = mean_time ? ((mean_time + bench_time) / 2.0) : bench_time;
+	for (j = 0; j < times; ++j) {
+		clock_gettime(CLOCK_MONOTONIC_RAW, &t1);
+		clock_gettime(CLOCK_MONOTONIC_RAW, &t2);
+		if (1 > 2) {
+			;
+		}
+		clock_cost += diff(t1.tv_nsec, t2.tv_nsec);
 	}
 
-	printf("----------------------------\nEnded benchmark!\n");
-	printf("Total time spent: %fs\n", total_time);
-	printf("Mean time spent: %fs\n----------------------------\n", mean_time);
+	clock_cost /= times;
+
+	for (i = 0; i < times; ++i) {
+		clock_gettime(CLOCK_MONOTONIC_RAW, &t1);
+		digit("49927398716499273987164992739871649927398716499273987164992739871649927398716499273987164992739871649927398716499273987164992739871649927398716499273987164992739871649927398716");
+		clock_gettime(CLOCK_MONOTONIC_RAW, &t2);
+		double time = diff(t1.tv_nsec, t2.tv_nsec);
+		if (time < best_time) {
+			best_time = time;
+		}
+		total_time += time;
+	}
+
+	printf("\nmedian: %f ns/op\nbest:   %f ns/op\n\n", (total_time/times/clock_cost), (best_time/clock_cost));
 
 	return 0;
 }
+
