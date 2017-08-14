@@ -34,6 +34,10 @@ int main() {
 		return 1;
 	}
 
+	if (digit("ZZZZ") != -1) {
+		return 1;
+	}
+
 	printf("passed");
 
 	// micro benchmark
