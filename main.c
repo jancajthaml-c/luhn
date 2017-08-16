@@ -1,7 +1,3 @@
-/////////////////////////////////
-
-// FIXME separate to main.c
-
 #include "luhn.h"
 
 #include <stdio.h>

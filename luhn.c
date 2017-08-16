@@ -12,7 +12,7 @@ loop:
     return -1;
   }
   d += ((length & 1) ? m[c - 48] : (c - 48));
-  goto *(length-- ? &&result : &&loop);
+  goto *(--length ? &&loop : &&result);
 
 result:
   return (d - (d/10)*10);
