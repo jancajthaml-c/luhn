@@ -8,19 +8,16 @@ default: test clean
 $(OUTDIR):
 	@mkdir -p $(OUTDIR)
 
-#fixme create build stage
-
 test: $(OUTDIR) $(OUTDIR)/$(MODULE).o $(OUTDIR)/$(MODULE)_o2.o $(OUTDIR)/$(MODULE)_o3.o $(OUTDIR)/main.o
-	#gcc $(OUTDIR)/$(MODULE).o -o pkg/luhn
-	gcc $(OUTDIR)/$(MODULE).o $(OUTDIR)/main.o -o test_human
-	gcc -o2 $(OUTDIR)/$(MODULE)_o2.o $(OUTDIR)/main.o -o test_o2
-	gcc -o3 $(OUTDIR)/$(MODULE)_o3.o $(OUTDIR)/main.o -o test_o3
+	gcc $(OUTDIR)/$(MODULE).o $(OUTDIR)/main.o -o $(OUTDIR)/luhn
+	gcc -o2 $(OUTDIR)/$(MODULE)_o2.o $(OUTDIR)/main.o -o $(OUTDIR)/test_o2
+	gcc -o3 $(OUTDIR)/$(MODULE)_o3.o $(OUTDIR)/main.o -o $(OUTDIR)/test_o3
 	@echo "\ntest [human optimised]"
-	@./test_human || echo "failed"
+	@./$(OUTDIR)/luhn || echo "failed"
 	@echo "\ntest [automatic optimalisation level 2]"
-	@./test_o2 || echo "failed"
+	@./$(OUTDIR)/test_o2 || echo "failed"
 	@echo "\ntest [automatic optimalisation level 3]"
-	@./test_o3 || echo "failed"
+	@./$(OUTDIR)/test_o3 || echo "failed"
 
 $(OUTDIR)/$(MODULE).o: src/$(MODULE).c
 	gcc -o $(OUTDIR)/$(MODULE).o -c $^
@@ -35,7 +32,4 @@ $(OUTDIR)/main.o: src/main.c
 	gcc -o $(OUTDIR)/main.o -c $^
 
 clean:
-	@rm -f test_human
-	@rm -f test_o2
-	@rm -f test_o3
 	@rm -rf $(OUTDIR)
