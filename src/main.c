@@ -43,7 +43,7 @@ int main() {
 
   // micro benchmark
   int i;
-  unsigned int times = 20000000;
+  unsigned int times = 50000000;
 
   double total_time = 0;
   double clock_cost = 0;
@@ -51,22 +51,13 @@ int main() {
   struct timespec t1;
   struct timespec t2;
 
-  char* string = "499273987164992739871649927398716499273987164992739871649927398716";
-  //int len = strlen(string);
+  char* string = "00123014764700968325";
 
-  for (i = 0; i < times; ++i) {
-    // clock cost runtime reference
-    clock_gettime(CLOCK_MONOTONIC_RAW, &t1);
-    clock_gettime(CLOCK_MONOTONIC_RAW, &t2);
-    clock_cost += diff(t1.tv_nsec, t2.tv_nsec);
-    // real test
-    clock_gettime(CLOCK_MONOTONIC_RAW, &t1);
-    luhn_digit(string);
-    clock_gettime(CLOCK_MONOTONIC_RAW, &t2);
-    total_time += diff(t1.tv_nsec, t2.tv_nsec);
-  }
+  clock_gettime(CLOCK_MONOTONIC_RAW, &t1);
+  for (i = 0; i < times; ++i) luhn_digit(string);
+  clock_gettime(CLOCK_MONOTONIC_RAW, &t2);
 
-  printf("%d ns/op\n", (int)((total_time-clock_cost)/times));
+  printf("%d ps/op\n", (int)(1000*diff(t1.tv_nsec, t2.tv_nsec)/times));
 
   return 0;
 }
